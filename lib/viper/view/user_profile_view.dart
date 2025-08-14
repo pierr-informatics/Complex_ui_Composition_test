@@ -327,6 +327,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                   _dateFormat.format(profile.dateOfBirth),
                 ),
                 _buildInfoItem('Age', widget.presenter.getAge().toString()),
+                _buildInfoItem('Gender', profile.gender.isEmpty ? 'Not specified' : profile.gender),
+                _buildInfoItem('Preferred Contact', profile.preferredContactMethod.isEmpty ? 'Not specified' : profile.preferredContactMethod),
 
                 const SizedBox(height: 24),
                 // Address Section
@@ -345,6 +347,24 @@ class _UserProfileViewState extends State<UserProfileView> {
                   'Annual Income',
                   '\$${NumberFormat('#,##0.00').format(profile.income)}',
                 ),
+                _buildInfoItem('Employment Type', profile.employmentType.isEmpty ? 'Not specified' : profile.employmentType),
+                _buildInfoItem('Years of Experience', profile.yearsOfExperience.toString()),
+                _buildInfoItem(
+                  'Expected Salary',
+                  '\$${NumberFormat('#,##0.00').format(profile.expectedSalary)}',
+                ),
+                _buildInfoItem(
+                  'Available From',
+                  _dateFormat.format(profile.availabilityDate),
+                ),
+                _buildInfoItem(
+                  'Remote Work Eligible',
+                  profile.isRemoteWorkEligible ? 'Yes' : 'No',
+                ),
+                _buildInfoItem(
+                  'Willing to Relocate',
+                  profile.isWillingToRelocate ? 'Yes' : 'No',
+                ),
 
                 const SizedBox(height: 24),
                 // Interests
@@ -358,6 +378,45 @@ class _UserProfileViewState extends State<UserProfileView> {
                 ),
 
                 const SizedBox(height: 24),
+                
+                // Languages
+                _buildSectionTitle('Languages'),
+                profile.languages.isEmpty 
+                  ? const Text('No languages specified')
+                  : Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: profile.languages
+                          .map((lang) => Chip(
+                            label: Text(lang),
+                            backgroundColor: Colors.blue.shade100,
+                          ))
+                          .toList(),
+                    ),
+                
+                const SizedBox(height: 24),
+                
+                // Certifications
+                _buildSectionTitle('Certifications'),
+                profile.certifications.isEmpty 
+                  ? const Text('No certifications added')
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: profile.certifications
+                          .map((cert) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.verified, color: Colors.green),
+                                const SizedBox(width: 8),
+                                Text(cert, style: const TextStyle(fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          ))
+                          .toList(),
+                    ),
+                
+                const SizedBox(height: 24),
                 // Preferences
                 _buildSectionTitle('Preferences'),
                 ...profile.preferences.entries.map(
@@ -367,6 +426,28 @@ class _UserProfileViewState extends State<UserProfileView> {
                     onChanged: (bool value) {
                       widget.presenter.updatePreference(entry.key, value);
                     },
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Availability Hours
+                _buildSectionTitle('Weekly Availability'),
+                ...profile.availabilityWeekdays.entries.map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w500)),
+                        Text('${entry.value} hours', 
+                          style: TextStyle(
+                            color: entry.value > 0 ? Colors.green : Colors.grey,
+                            fontWeight: entry.value > 0 ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
