@@ -9,50 +9,52 @@ class ViewProfessionalInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Professional Information',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        _buildInfoItem('Occupation', profile.occupation),
-        _buildInfoItem('Company', profile.companyName),
-        _buildInfoItem(
-          'Annual Income',
-          '\$${NumberFormat('#,##0.00').format(profile.income)}',
-        ),
-        _buildInfoItem(
-          'Employment Type',
-          profile.employmentType.isEmpty
-              ? 'Not specified'
-              : profile.employmentType,
-        ),
-        _buildInfoItem(
-          'Years of Experience',
-          profile.yearsOfExperience.toString(),
-        ),
-        _buildInfoItem(
-          'Expected Salary',
-          '\$${NumberFormat('#,##0.00').format(profile.expectedSalary)}',
-        ),
-        _buildInfoItem(
-          'Available From',
-          DateFormat('yyyy-MM-dd').format(profile.availabilityDate),
-        ),
-        _buildInfoItem(
-          'Remote Work Eligible',
-          profile.isRemoteWorkEligible ? 'Yes' : 'No',
-        ),
-        _buildInfoItem(
-          'Willing to Relocate',
-          profile.isWillingToRelocate ? 'Yes' : 'No',
-        ),
-        const SizedBox(height: 24),
-      ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Professional Information',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          _buildInfoItem('Occupation', profile.occupation),
+          _buildInfoItem('Company', profile.companyName),
+          _buildInfoItem(
+            'Annual Income',
+            '\$${NumberFormat('#,##0.00').format(profile.income)}',
+          ),
+          _buildInfoItem(
+            'Employment Type',
+            profile.employmentType.isEmpty
+                ? 'Not specified'
+                : profile.employmentType,
+          ),
+          _buildInfoItem(
+            'Years of Experience',
+            profile.yearsOfExperience.toString(),
+          ),
+          _buildInfoItem(
+            'Expected Salary',
+            '\$${NumberFormat('#,##0.00').format(profile.expectedSalary)}',
+          ),
+          _buildInfoItem(
+            'Available From',
+            DateFormat('yyyy-MM-dd').format(profile.availabilityDate),
+          ),
+          _buildInfoItem(
+            'Remote Work Eligible',
+            profile.isRemoteWorkEligible ? 'Yes' : 'No',
+          ),
+          _buildInfoItem(
+            'Willing to Relocate',
+            profile.isWillingToRelocate ? 'Yes' : 'No',
+          ),
+        ],
+      ),
     );
   }
 

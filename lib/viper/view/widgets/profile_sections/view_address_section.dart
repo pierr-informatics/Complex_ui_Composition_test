@@ -8,22 +8,24 @@ class ViewAddressSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Address',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        _buildInfoItem('Street', profile.address),
-        _buildInfoItem('City', profile.city),
-        _buildInfoItem('State', profile.state),
-        _buildInfoItem('ZIP Code', profile.zipCode),
-        const SizedBox(height: 24),
-      ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Address',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          _buildInfoItem('Street', profile.address),
+          _buildInfoItem('City', profile.city),
+          _buildInfoItem('State', profile.state),
+          _buildInfoItem('ZIP Code', profile.zipCode),
+        ],
+      ),
     );
   }
 

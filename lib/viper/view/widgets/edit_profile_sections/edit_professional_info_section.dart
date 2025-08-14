@@ -83,11 +83,51 @@ class _EditProfessionalInfoSectionState
             if (double.tryParse(value) == null) {
               return 'Please enter a valid number';
             }
+
+            double income = double.parse(value);
+            if (income < 50000 || income > 200000) {
+              // Showing an immediate dialog is not possible in validator
+              // We'll mark it as error and handle the dialog elsewhere
+              return 'Value must be between 50000 and 200000';
+            }
             return null;
           },
           onChanged: (value) {
-            widget.profile.income =
-                double.tryParse(value) ?? widget.profile.income;
+            double? parsedValue = double.tryParse(value);
+            if (parsedValue != null) {
+              widget.profile.income = parsedValue;
+
+              // Check if the value is outside the valid range
+              if (parsedValue < 50000 || parsedValue > 200000) {
+                // Use a post-frame callback to show dialog after the build completes
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Row(
+                        children: [
+                          Icon(Icons.warning, color: Colors.amber),
+                          SizedBox(width: 10),
+                          Text('Invalid Income'),
+                        ],
+                      ),
+                      content: Text(
+                        'Annual income must be between \$50,000 and \$200,000.',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                });
+              }
+            } else {
+              widget.profile.income = widget.profile.income;
+            }
           },
         ),
       ],

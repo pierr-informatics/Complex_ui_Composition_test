@@ -8,31 +8,34 @@ class ViewLanguagesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Languages',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        profile.languages.isEmpty
-            ? const Text('No languages specified')
-            : Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: profile.languages
-                    .map(
-                      (lang) => Chip(
-                        label: Text(lang),
-                        backgroundColor: Colors.blue.shade100,
-                      ),
-                    )
-                    .toList(),
-              ),
-      ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Languages',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          profile.languages.isEmpty
+              ? const Text('No languages specified')
+              : Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: profile.languages
+                      .map(
+                        (lang) => Chip(
+                          label: Text(lang),
+                          backgroundColor: Colors.blue.shade100,
+                        ),
+                      )
+                      .toList(),
+                ),
+        ],
+      ),
     );
   }
 }
