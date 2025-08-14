@@ -16,23 +16,42 @@ class _EditLanguagesSectionState extends State<EditLanguagesSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Languages', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          'Languages',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
         ...widget.profile.languages.map((lang) {
-          return ListTile(
-            title: Text(lang),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                setState(() {
-                  widget.profile.languages.remove(lang);
-                });
-              },
+          return Card(
+            elevation: 0,
+            margin: const EdgeInsets.only(bottom: 8),
+            color: Colors.transparent,
+            child: ListTile(
+              title: Text(
+                lang,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete_outline),
+                onPressed: () {
+                  setState(() {
+                    widget.profile.languages.remove(lang);
+                  });
+                },
+              ),
             ),
           );
         }),
-        ElevatedButton(
+        OutlinedButton.icon(
           onPressed: _showAddLanguageDialog,
-          child: const Text('Add Language'),
+          icon: const Icon(Icons.add),
+          label: const Text('Add Language'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.blue,
+            side: const BorderSide(color: Colors.blue),
+          ),
         ),
       ],
     );

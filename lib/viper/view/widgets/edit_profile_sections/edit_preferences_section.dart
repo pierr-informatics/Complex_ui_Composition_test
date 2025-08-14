@@ -16,16 +16,34 @@ class _EditPreferencesSectionState extends State<EditPreferencesSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Preferences', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          'Preferences',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
         ...widget.profile.preferences.entries.map((entry) {
-          return SwitchListTile(
-            title: Text(_formatPreferenceKey(entry.key)),
-            value: entry.value,
-            onChanged: (value) {
-              setState(() {
-                widget.profile.preferences[entry.key] = value;
-              });
-            },
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _formatPreferenceKey(entry.key),
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Switch(
+                  value: entry.value,
+                  activeColor: Colors.blue,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.profile.preferences[entry.key] = value;
+                    });
+                  },
+                ),
+              ],
+            ),
           );
         }),
       ],

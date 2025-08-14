@@ -16,12 +16,21 @@ class _EditInterestsSectionState extends State<EditInterestsSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Interests', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          'Interests',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8.0,
+          runSpacing: 8.0,
           children: widget.profile.interests.map((interest) {
             return Chip(
+              backgroundColor: Colors.grey.shade200,
               label: Text(interest),
+              deleteIconColor: Colors.black,
               onDeleted: () {
                 setState(() {
                   widget.profile.interests.remove(interest);
@@ -30,9 +39,15 @@ class _EditInterestsSectionState extends State<EditInterestsSection> {
             );
           }).toList(),
         ),
-        ElevatedButton(
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
           onPressed: _showAddInterestDialog,
-          child: const Text('Add Interest'),
+          icon: const Icon(Icons.add),
+          label: const Text('Add Interest'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.blue,
+            side: const BorderSide(color: Colors.blue),
+          ),
         ),
       ],
     );

@@ -409,8 +409,11 @@ class _UserProfileViewState extends State<UserProfileView> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.green,
+                      backgroundColor: const Color(0xFF4CAF50),
                       foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Text('SAVE PROFILE'),
                   ),
@@ -421,6 +424,10 @@ class _UserProfileViewState extends State<UserProfileView> {
                     onPressed: _toggleEditMode,
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: const BorderSide(color: Colors.grey),
                     ),
                     child: const Text('CANCEL'),
                   ),
