@@ -38,7 +38,7 @@ class _UserProfileViewState extends State<UserProfileView> {
   final _formKey = GlobalKey<FormState>();
   bool _isEditMode = false;
 
-  // Form controllers
+  // Form controllers - kept here to handle synchronizing when toggling between view/edit modes
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _emailController;
@@ -52,18 +52,6 @@ class _UserProfileViewState extends State<UserProfileView> {
   late TextEditingController _incomeController;
   late TextEditingController _expectedSalaryController;
   late TextEditingController _yearsOfExperienceController;
-
-  // Date selections
-  late DateTime _selectedDate;
-  late DateTime _availabilityDate;
-
-  // Dropdown and multi-select values
-  String _selectedGender = '';
-  String _selectedEmploymentType = '';
-  String _selectedContactMethod = '';
-  List<String> _selectedLanguages = [];
-  List<String> _selectedCertifications = [];
-  Map<String, int> _weekdayHours = {};
 
   @override
   void initState() {
@@ -84,21 +72,6 @@ class _UserProfileViewState extends State<UserProfileView> {
     _incomeController = TextEditingController();
     _expectedSalaryController = TextEditingController();
     _yearsOfExperienceController = TextEditingController();
-
-    // Initialize dates
-    _selectedDate = DateTime.now();
-    _availabilityDate = DateTime.now().add(const Duration(days: 30));
-
-    // Initialize selection values
-    _weekdayHours = {
-      'Monday': 8,
-      'Tuesday': 8,
-      'Wednesday': 8,
-      'Thursday': 8,
-      'Friday': 8,
-      'Saturday': 0,
-      'Sunday': 0,
-    };
   }
 
   @override
@@ -121,6 +94,7 @@ class _UserProfileViewState extends State<UserProfileView> {
   }
 
   void _updateControllersFromProfile(UserProfile profile) {
+    // Update text controllers - these are passed to edit widgets
     _firstNameController.text = profile.firstName;
     _lastNameController.text = profile.lastName;
     _emailController.text = profile.email;
@@ -135,17 +109,8 @@ class _UserProfileViewState extends State<UserProfileView> {
     _expectedSalaryController.text = profile.expectedSalary.toString();
     _yearsOfExperienceController.text = profile.yearsOfExperience.toString();
 
-    // Update dates
-    _selectedDate = profile.dateOfBirth;
-    _availabilityDate = profile.availabilityDate;
-
-    // Update selection values
-    _selectedGender = profile.gender;
-    _selectedEmploymentType = profile.employmentType;
-    _selectedContactMethod = profile.preferredContactMethod;
-    _selectedLanguages = List<String>.from(profile.languages);
-    _selectedCertifications = List<String>.from(profile.certifications);
-    _weekdayHours = Map<String, int>.from(profile.availabilityWeekdays);
+    // Other fields are handled directly by the component widgets
+    // using their internal state management
   }
 
   void _toggleEditMode() {
@@ -165,33 +130,16 @@ class _UserProfileViewState extends State<UserProfileView> {
   }
 
   Future<void> _saveProfile() async {
-    _tempProfile.firstName = _firstNameController.text;
-    _tempProfile.lastName = _lastNameController.text;
-    _tempProfile.email = _emailController.text;
-    _tempProfile.phoneNumber = _phoneController.text;
-    _tempProfile.address = _addressController.text;
-    _tempProfile.city = _cityController.text;
-    _tempProfile.state = _stateController.text;
-    _tempProfile.zipCode = _zipController.text;
-    _tempProfile.occupation = _occupationController.text;
-    _tempProfile.companyName = _companyController.text;
-    _tempProfile.income = double.parse(_incomeController.text);
-    _tempProfile.expectedSalary = double.parse(_expectedSalaryController.text);
-    _tempProfile.yearsOfExperience = int.parse(
-      _yearsOfExperienceController.text,
-    );
+    // This method is keeping data from controllers but using directly _tempProfile values
+    // No need to assign values from controllers to _tempProfile as this happens in onChanged
+    // We only need to ensure the data flow from child widgets is preserved
 
-    // Update dates
-    _tempProfile.dateOfBirth = _selectedDate;
-    _tempProfile.availabilityDate = _availabilityDate;
+    // The values are already updated in _tempProfile via onChanged events
+    // We're keeping this structure for clarity and in case we need to add
+    // additional validation or transformation in the future
 
-    // Update selection values
-    _tempProfile.gender = _selectedGender;
-    _tempProfile.employmentType = _selectedEmploymentType;
-    _tempProfile.preferredContactMethod = _selectedContactMethod;
-    _tempProfile.languages = _selectedLanguages;
-    _tempProfile.certifications = _selectedCertifications;
-    _tempProfile.availabilityWeekdays = _weekdayHours;
+    // These fields are already handled by the onChanged handlers in each section
+    // So no need to explicitly copy them from controllers to _tempProfile
 
     final success = await widget.presenter.saveUserProfile(_tempProfile);
     if (success) {
