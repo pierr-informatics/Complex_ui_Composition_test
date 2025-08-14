@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'viper/entity/user_profile_repository.dart';
 import 'viper/interactor/user_profile_interactor.dart';
 import 'viper/presenter/user_profile_presenter.dart';
-import 'viper/view/user_profile_view.dart';
+import 'viper/view/user_profile_view.dart'; // Changed back to use the original enhanced view
 import 'viper/router/user_profile_router.dart';
 
 void main() {

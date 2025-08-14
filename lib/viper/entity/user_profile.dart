@@ -19,11 +19,24 @@ class UserProfile {
   bool isSubscribed;
   String profileImageUrl;
   Map<String, bool> preferences;
-  
+
   // Additional data for grid display
   List<WorkExperience> workExperience;
   List<Education> education;
   Map<String, int> skillRatings;
+
+  // Additional fields for new form widgets
+  String gender;
+  List<String> languages;
+  String employmentType;
+  DateTime availabilityDate;
+  double expectedSalary;
+  int yearsOfExperience;
+  List<String> certifications;
+  String preferredContactMethod;
+  bool isRemoteWorkEligible;
+  bool isWillingToRelocate;
+  Map<String, int> availabilityWeekdays; // Hours per weekday (0-24)
 
   UserProfile({
     required this.id,
@@ -46,6 +59,17 @@ class UserProfile {
     required this.workExperience,
     required this.education,
     required this.skillRatings,
+    required this.gender,
+    required this.languages,
+    required this.employmentType,
+    required this.availabilityDate,
+    required this.expectedSalary,
+    required this.yearsOfExperience,
+    required this.certifications,
+    required this.preferredContactMethod,
+    required this.isRemoteWorkEligible,
+    required this.isWillingToRelocate,
+    required this.availabilityWeekdays,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -74,6 +98,33 @@ class UserProfile {
           .map((e) => Education.fromJson(e))
           .toList(),
       skillRatings: Map<String, int>.from(json['skillRatings']),
+      gender: json['gender'] ?? '',
+      languages: json['languages'] != null
+          ? List<String>.from(json['languages'])
+          : <String>[],
+      employmentType: json['employmentType'] ?? '',
+      availabilityDate: json['availabilityDate'] != null
+          ? DateTime.parse(json['availabilityDate'])
+          : DateTime.now(),
+      expectedSalary: json['expectedSalary'] ?? 0.0,
+      yearsOfExperience: json['yearsOfExperience'] ?? 0,
+      certifications: json['certifications'] != null
+          ? List<String>.from(json['certifications'])
+          : <String>[],
+      preferredContactMethod: json['preferredContactMethod'] ?? 'email',
+      isRemoteWorkEligible: json['isRemoteWorkEligible'] ?? false,
+      isWillingToRelocate: json['isWillingToRelocate'] ?? false,
+      availabilityWeekdays: json['availabilityWeekdays'] != null
+          ? Map<String, int>.from(json['availabilityWeekdays'])
+          : <String, int>{
+              'Monday': 8,
+              'Tuesday': 8,
+              'Wednesday': 8,
+              'Thursday': 8,
+              'Friday': 8,
+              'Saturday': 0,
+              'Sunday': 0,
+            },
     );
   }
 
@@ -99,6 +150,17 @@ class UserProfile {
       'workExperience': workExperience.map((e) => e.toJson()).toList(),
       'education': education.map((e) => e.toJson()).toList(),
       'skillRatings': skillRatings,
+      'gender': gender,
+      'languages': languages,
+      'employmentType': employmentType,
+      'availabilityDate': availabilityDate.toIso8601String(),
+      'expectedSalary': expectedSalary,
+      'yearsOfExperience': yearsOfExperience,
+      'certifications': certifications,
+      'preferredContactMethod': preferredContactMethod,
+      'isRemoteWorkEligible': isRemoteWorkEligible,
+      'isWillingToRelocate': isWillingToRelocate,
+      'availabilityWeekdays': availabilityWeekdays,
     };
   }
 }

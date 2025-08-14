@@ -87,7 +87,7 @@ class UserProfilePresenter {
       await saveUserProfile(updatedProfile);
     }
   }
-  
+
   void dispose() {
     isLoading.dispose();
     errorMessage.dispose();

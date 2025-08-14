@@ -31,7 +31,20 @@ class _UserProfileViewState extends State<UserProfileView> {
   late TextEditingController _occupationController;
   late TextEditingController _companyController;
   late TextEditingController _incomeController;
+  late TextEditingController _expectedSalaryController;
+  late TextEditingController _yearsOfExperienceController;
+
+  // Date selections
   late DateTime _selectedDate;
+  late DateTime _availabilityDate;
+
+  // Dropdown and multi-select values
+  String _selectedGender = '';
+  String _selectedEmploymentType = '';
+  String _selectedContactMethod = '';
+  List<String> _selectedLanguages = [];
+  List<String> _selectedCertifications = [];
+  Map<String, int> _weekdayHours = {};
 
   @override
   void initState() {
@@ -50,7 +63,23 @@ class _UserProfileViewState extends State<UserProfileView> {
     _occupationController = TextEditingController();
     _companyController = TextEditingController();
     _incomeController = TextEditingController();
+    _expectedSalaryController = TextEditingController();
+    _yearsOfExperienceController = TextEditingController();
+
+    // Initialize dates
     _selectedDate = DateTime.now();
+    _availabilityDate = DateTime.now().add(const Duration(days: 30));
+
+    // Initialize selection values
+    _weekdayHours = {
+      'Monday': 8,
+      'Tuesday': 8,
+      'Wednesday': 8,
+      'Thursday': 8,
+      'Friday': 8,
+      'Saturday': 0,
+      'Sunday': 0,
+    };
   }
 
   @override
@@ -66,6 +95,8 @@ class _UserProfileViewState extends State<UserProfileView> {
     _occupationController.dispose();
     _companyController.dispose();
     _incomeController.dispose();
+    _expectedSalaryController.dispose();
+    _yearsOfExperienceController.dispose();
     widget.presenter.dispose();
     super.dispose();
   }
@@ -82,7 +113,20 @@ class _UserProfileViewState extends State<UserProfileView> {
     _occupationController.text = profile.occupation;
     _companyController.text = profile.companyName;
     _incomeController.text = profile.income.toString();
+    _expectedSalaryController.text = profile.expectedSalary.toString();
+    _yearsOfExperienceController.text = profile.yearsOfExperience.toString();
+
+    // Update dates
     _selectedDate = profile.dateOfBirth;
+    _availabilityDate = profile.availabilityDate;
+
+    // Update selection values
+    _selectedGender = profile.gender;
+    _selectedEmploymentType = profile.employmentType;
+    _selectedContactMethod = profile.preferredContactMethod;
+    _selectedLanguages = List<String>.from(profile.languages);
+    _selectedCertifications = List<String>.from(profile.certifications);
+    _weekdayHours = Map<String, int>.from(profile.availabilityWeekdays);
   }
 
   void _toggleEditMode() {
@@ -113,7 +157,22 @@ class _UserProfileViewState extends State<UserProfileView> {
     _tempProfile.occupation = _occupationController.text;
     _tempProfile.companyName = _companyController.text;
     _tempProfile.income = double.parse(_incomeController.text);
+    _tempProfile.expectedSalary = double.parse(_expectedSalaryController.text);
+    _tempProfile.yearsOfExperience = int.parse(
+      _yearsOfExperienceController.text,
+    );
+
+    // Update dates
     _tempProfile.dateOfBirth = _selectedDate;
+    _tempProfile.availabilityDate = _availabilityDate;
+
+    // Update selection values
+    _tempProfile.gender = _selectedGender;
+    _tempProfile.employmentType = _selectedEmploymentType;
+    _tempProfile.preferredContactMethod = _selectedContactMethod;
+    _tempProfile.languages = _selectedLanguages;
+    _tempProfile.certifications = _selectedCertifications;
+    _tempProfile.availabilityWeekdays = _weekdayHours;
 
     final success = await widget.presenter.saveUserProfile(_tempProfile);
     if (success) {
@@ -133,6 +192,20 @@ class _UserProfileViewState extends State<UserProfileView> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectAvailabilityDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _availabilityDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != _availabilityDate) {
+      setState(() {
+        _availabilityDate = picked;
       });
     }
   }
@@ -287,20 +360,19 @@ class _UserProfileViewState extends State<UserProfileView> {
                 const SizedBox(height: 24),
                 // Preferences
                 _buildSectionTitle('Preferences'),
-                ...profile.preferences.entries
-                    .map(
-                      (entry) => SwitchListTile(
-                        title: Text(_formatPreferenceKey(entry.key)),
-                        value: entry.value,
-                        onChanged: (bool value) {
-                          widget.presenter.updatePreference(entry.key, value);
-                        },
-                      ),
-                    ),
+                ...profile.preferences.entries.map(
+                  (entry) => SwitchListTile(
+                    title: Text(_formatPreferenceKey(entry.key)),
+                    value: entry.value,
+                    onChanged: (bool value) {
+                      widget.presenter.updatePreference(entry.key, value);
+                    },
+                  ),
+                ),
               ],
             ),
           ),
-          
+
           // Right side - Complex grid with additional information
           const SizedBox(width: 24),
           Expanded(
@@ -325,7 +397,9 @@ class _UserProfileViewState extends State<UserProfileView> {
                               children: [
                                 Text(
                                   entry.key,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text('${entry.value}%'),
                               ],
@@ -343,9 +417,9 @@ class _UserProfileViewState extends State<UserProfileView> {
                         ),
                       ),
                     ),
-                    
+
                     const Divider(height: 32),
-                    
+
                     // Work experience section
                     _buildSectionTitle('Work Experience'),
                     ...profile.workExperience.map(
@@ -390,7 +464,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                                     bottom: 2.0,
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text('• '),
                                       Expanded(child: Text(achievement)),
@@ -400,14 +475,15 @@ class _UserProfileViewState extends State<UserProfileView> {
                               ),
                             ],
                             const SizedBox(height: 8),
-                            if (profile.workExperience.last != exp) const Divider(),
+                            if (profile.workExperience.last != exp)
+                              const Divider(),
                           ],
                         ),
                       ),
                     ),
-                    
+
                     const Divider(height: 32),
-                    
+
                     // Education section
                     _buildSectionTitle('Education'),
                     ...profile.education.map(
@@ -448,7 +524,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                                     bottom: 2.0,
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text('• '),
                                       Expanded(child: Text(achievement)),
@@ -727,20 +804,370 @@ class _UserProfileViewState extends State<UserProfileView> {
             ),
 
             const SizedBox(height: 24),
-            // Preferences
-            _buildSectionTitle('Preferences'),
-            ...profile.preferences.entries
-                .map(
-                  (entry) => SwitchListTile(
-                    title: Text(_formatPreferenceKey(entry.key)),
-                    value: entry.value,
-                    onChanged: (bool value) {
+            // Additional Information Section
+            _buildSectionTitle('Additional Information'),
+
+            // Gender Dropdown
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Gender',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+              value: _selectedGender.isNotEmpty ? _selectedGender : null,
+              hint: const Text('Select Gender'),
+              isExpanded: true,
+              items: ['Male', 'Female', 'Non-binary', 'Prefer not to say'].map((
+                String value,
+              ) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    _selectedGender = newValue;
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Employment Type Segmented Button
+            const Text(
+              'Employment Type',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: const [
+                ButtonSegment<String>(
+                  value: 'Full-time',
+                  label: Text('Full-time'),
+                  icon: Icon(Icons.work),
+                ),
+                ButtonSegment<String>(
+                  value: 'Part-time',
+                  label: Text('Part-time'),
+                  icon: Icon(Icons.work_outline),
+                ),
+                ButtonSegment<String>(
+                  value: 'Contract',
+                  label: Text('Contract'),
+                  icon: Icon(Icons.description),
+                ),
+                ButtonSegment<String>(
+                  value: 'Freelance',
+                  label: Text('Freelance'),
+                  icon: Icon(Icons.person_outline),
+                ),
+              ],
+              selected: {
+                _selectedEmploymentType.isNotEmpty
+                    ? _selectedEmploymentType
+                    : 'Full-time',
+              },
+              onSelectionChanged: (Set<String> newSelection) {
+                setState(() {
+                  _selectedEmploymentType = newSelection.first;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Availability Date Picker
+            InkWell(
+              onTap: () => _selectAvailabilityDate(context),
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Availability Date',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.event_available),
+                ),
+                child: Text(_dateFormat.format(_availabilityDate)),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Expected Salary Slider
+            TextFormField(
+              controller: _expectedSalaryController,
+              decoration: InputDecoration(
+                labelText:
+                    'Expected Salary (\$${_expectedSalaryController.text})',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.monetization_on),
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {}); // Update the label with new value
+              },
+            ),
+            Slider(
+              min: 50000,
+              max: 200000,
+              divisions: 15,
+              value:
+                  double.tryParse(_expectedSalaryController.text) ??
+                  profile.expectedSalary,
+              label:
+                  '\$${(double.tryParse(_expectedSalaryController.text) ?? profile.expectedSalary).toStringAsFixed(0)}',
+              onChanged: (value) {
+                setState(() {
+                  _expectedSalaryController.text = value.toStringAsFixed(0);
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Years of Experience Stepper
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _yearsOfExperienceController,
+                    decoration: const InputDecoration(
+                      labelText: 'Years of Experience',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.timeline),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Required';
+                      }
+                      if (int.tryParse(value) == null) {
+                        return 'Invalid number';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        setState(() {
+                          final currentValue =
+                              int.tryParse(_yearsOfExperienceController.text) ??
+                              0;
+                          _yearsOfExperienceController.text = (currentValue + 1)
+                              .toString();
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.remove),
+                      onPressed: () {
+                        setState(() {
+                          final currentValue =
+                              int.tryParse(_yearsOfExperienceController.text) ??
+                              0;
+                          if (currentValue > 0) {
+                            _yearsOfExperienceController.text =
+                                (currentValue - 1).toString();
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Preferred Contact Method Radio Buttons
+            const Text(
+              'Preferred Contact Method',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            RadioListTile<String>(
+              title: const Text('Email'),
+              value: 'email',
+              groupValue: _selectedContactMethod,
+              onChanged: (value) {
+                setState(() {
+                  _selectedContactMethod = value!;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Phone'),
+              value: 'phone',
+              groupValue: _selectedContactMethod,
+              onChanged: (value) {
+                setState(() {
+                  _selectedContactMethod = value!;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Text Message'),
+              value: 'sms',
+              groupValue: _selectedContactMethod,
+              onChanged: (value) {
+                setState(() {
+                  _selectedContactMethod = value!;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Remote Work Checkbox
+            CheckboxListTile(
+              title: const Text('Eligible for Remote Work'),
+              subtitle: const Text('Can work fully remote'),
+              value: _tempProfile.isRemoteWorkEligible,
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _tempProfile.isRemoteWorkEligible = value;
+                  });
+                }
+              },
+            ),
+
+            // Relocation Checkbox
+            CheckboxListTile(
+              title: const Text('Willing to Relocate'),
+              subtitle: const Text('Open to moving for the right position'),
+              value: _tempProfile.isWillingToRelocate,
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _tempProfile.isWillingToRelocate = value;
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Languages Chips
+            const Text(
+              'Languages',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                ...[
+                  'English',
+                  'Spanish',
+                  'French',
+                  'German',
+                  'Chinese',
+                  'Japanese',
+                  'Russian',
+                ].map((language) {
+                  final isSelected = _selectedLanguages.contains(language);
+                  return FilterChip(
+                    label: Text(language),
+                    selected: isSelected,
+                    onSelected: (bool selected) {
                       setState(() {
-                        _tempProfile.preferences[entry.key] = value;
+                        if (selected) {
+                          _selectedLanguages.add(language);
+                        } else {
+                          _selectedLanguages.remove(language);
+                        }
+                      });
+                    },
+                    selectedColor: Colors.blue.shade100,
+                    checkmarkColor: Colors.blue.shade800,
+                  );
+                }),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Certifications List with Add Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Certifications',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    _showAddCertificationDialog();
+                  },
+                  tooltip: 'Add Certification',
+                ),
+              ],
+            ),
+            ..._selectedCertifications.map(
+              (cert) => Card(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                child: ListTile(
+                  title: Text(cert),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () {
+                      setState(() {
+                        _selectedCertifications.remove(cert);
                       });
                     },
                   ),
                 ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Availability Weekday Hours
+            const Text(
+              'Availability Hours per Day',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            ..._weekdayHours.entries.map(
+              (entry) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 100, child: Text(entry.key)),
+                    Expanded(
+                      child: Slider(
+                        min: 0,
+                        max: 12,
+                        divisions: 12,
+                        value: entry.value.toDouble(),
+                        label: '${entry.value} hours',
+                        onChanged: (value) {
+                          setState(() {
+                            _weekdayHours[entry.key] = value.toInt();
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 40, child: Text('${entry.value}h')),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+            // Preferences
+            _buildSectionTitle('Preferences'),
+            ...profile.preferences.entries.map(
+              (entry) => SwitchListTile(
+                title: Text(_formatPreferenceKey(entry.key)),
+                value: entry.value,
+                onChanged: (bool value) {
+                  setState(() {
+                    _tempProfile.preferences[entry.key] = value;
+                  });
+                },
+              ),
+            ),
 
             const SizedBox(height: 32),
             SizedBox(
@@ -819,14 +1246,16 @@ class _UserProfileViewState extends State<UserProfileView> {
     );
     return result.substring(0, 1).toUpperCase() + result.substring(1);
   }
-  
+
   // Helper for formatting work date ranges
   String _formatWorkPeriod(DateTime startDate, DateTime? endDate) {
     final start = DateFormat('MMM yyyy').format(startDate);
-    final end = endDate != null ? DateFormat('MMM yyyy').format(endDate) : 'Present';
+    final end = endDate != null
+        ? DateFormat('MMM yyyy').format(endDate)
+        : 'Present';
     return '$start - $end';
   }
-  
+
   // Helper for determining color based on skill level
   Color _getColorForSkillLevel(int level) {
     if (level >= 90) return Colors.green;
@@ -858,6 +1287,42 @@ class _UserProfileViewState extends State<UserProfileView> {
               if (interest.isNotEmpty) {
                 setState(() {
                   _tempProfile.interests.add(interest);
+                });
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('ADD'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddCertificationDialog() {
+    final textController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Certification'),
+        content: TextField(
+          controller: textController,
+          decoration: const InputDecoration(
+            hintText: 'Enter certification name',
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () {
+              final certification = textController.text.trim();
+              if (certification.isNotEmpty) {
+                setState(() {
+                  _selectedCertifications.add(certification);
                 });
               }
               Navigator.pop(context);

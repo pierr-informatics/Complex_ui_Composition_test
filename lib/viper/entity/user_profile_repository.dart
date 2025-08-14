@@ -47,7 +47,7 @@ class UserProfileRepository {
           achievements: [
             'Reduced app loading time by 40%',
             'Implemented CI/CD pipeline',
-            'Mentored 5 junior developers'
+            'Mentored 5 junior developers',
           ],
         ),
         WorkExperience(
@@ -59,7 +59,7 @@ class UserProfileRepository {
           achievements: [
             'Developed e-commerce platform with 100K+ users',
             'Optimized database queries resulting in 30% faster response times',
-            'Implemented secure payment processing system'
+            'Implemented secure payment processing system',
           ],
         ),
         WorkExperience(
@@ -71,7 +71,7 @@ class UserProfileRepository {
           achievements: [
             'Designed responsive UI for mobile and desktop',
             'Contributed to open source libraries',
-            'Built analytics dashboard used by entire company'
+            'Built analytics dashboard used by entire company',
           ],
         ),
       ],
@@ -86,7 +86,7 @@ class UserProfileRepository {
           achievements: [
             'Graduated with honors',
             'Research assistant in AI lab',
-            'Published paper on machine learning algorithms'
+            'Published paper on machine learning algorithms',
           ],
         ),
         Education(
@@ -99,7 +99,7 @@ class UserProfileRepository {
           achievements: [
             'Dean\'s list for 6 semesters',
             'Led programming club',
-            'Developed award-winning student project'
+            'Developed award-winning student project',
           ],
         ),
       ],
@@ -114,6 +114,29 @@ class UserProfileRepository {
         'AWS': 65,
         'Docker': 75,
         'Git': 90,
+      },
+      gender: 'Male',
+      languages: ['English', 'Spanish', 'German'],
+      employmentType: 'Full-time',
+      availabilityDate: DateTime.now().add(const Duration(days: 30)),
+      expectedSalary: 130000.0,
+      yearsOfExperience: 10,
+      certifications: [
+        'AWS Certified Developer',
+        'Google Cloud Professional',
+        'Certified Scrum Master',
+      ],
+      preferredContactMethod: 'email',
+      isRemoteWorkEligible: true,
+      isWillingToRelocate: false,
+      availabilityWeekdays: {
+        'Monday': 8,
+        'Tuesday': 8,
+        'Wednesday': 8,
+        'Thursday': 8,
+        'Friday': 6,
+        'Saturday': 0,
+        'Sunday': 0,
       },
     );
   }
