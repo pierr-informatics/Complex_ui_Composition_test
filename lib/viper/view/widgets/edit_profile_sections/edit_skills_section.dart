@@ -33,6 +33,7 @@ class _EditSkillsSectionState extends State<EditSkillsSection> {
     if (level >= 90) return Colors.green;
     if (level >= 75) return Colors.blue;
     if (level >= 60) return Colors.orange;
+    if (level >= 40) return Colors.amber;
     return Colors.red;
   }
 
@@ -87,20 +88,34 @@ class _EditSkillsSectionState extends State<EditSkillsSection> {
                     Row(
                       children: [
                         Expanded(
-                          child: Slider(
-                            value: entry.value.toDouble(),
-                            min: 0,
-                            max: 100,
-                            divisions: 20,
-                            label: entry.value.toString(),
-                            activeColor: _getColorForSkillLevel(entry.value),
-                            onChanged: (value) {
-                              setState(() {
-                                _skillRatings[entry.key] = value.toInt();
-                                widget.profile.skillRatings[entry.key] = value
-                                    .toInt();
-                              });
-                            },
+                          child: Column(
+                            children: [
+                              Slider(
+                                value: entry.value.toDouble(),
+                                min: 0,
+                                max: 100,
+                                divisions: 20,
+                                label: entry.value.toString(),
+                                activeColor: _getColorForSkillLevel(
+                                  entry.value,
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _skillRatings[entry.key] = value.toInt();
+                                    widget.profile.skillRatings[entry.key] =
+                                        value.toInt();
+                                  });
+                                },
+                              ),
+                              LinearProgressIndicator(
+                                value: entry.value / 100,
+                                minHeight: 8,
+                                backgroundColor: Colors.grey[300],
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  _getColorForSkillLevel(entry.value),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -138,6 +153,10 @@ class _EditSkillsSectionState extends State<EditSkillsSection> {
                           });
                         }
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
                       child: const Text('Add'),
                     ),
                     const SizedBox(width: 8),
@@ -159,6 +178,17 @@ class _EditSkillsSectionState extends State<EditSkillsSection> {
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.add),
                   label: const Text('Add New Skill'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                   onPressed: () {
                     setState(() {
                       _isAddingSkill = true;

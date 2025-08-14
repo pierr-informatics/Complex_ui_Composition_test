@@ -8,6 +8,7 @@ import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_languag
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_personal_info_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_preferences_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_professional_info_section.dart';
+import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_skills_section.dart';
 import 'package:complex_ui/viper/view/widgets/profile_sections/view_address_section.dart';
 import 'package:complex_ui/viper/view/widgets/profile_sections/view_availability_section.dart';
 import 'package:complex_ui/viper/view/widgets/profile_sections/view_certifications_section.dart';
@@ -342,6 +343,10 @@ class _UserProfileViewState extends State<UserProfileView> {
 
             // Preferences Section (App Settings)
             EditPreferencesSection(profile: _tempProfile),
+            const SizedBox(height: 24),
+
+            // Skills Section
+            EditSkillsSection(profile: _tempProfile),
             const SizedBox(height: 32),
 
             // Save and Cancel buttons
