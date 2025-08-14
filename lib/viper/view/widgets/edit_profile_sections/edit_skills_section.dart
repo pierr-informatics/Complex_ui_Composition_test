@@ -88,34 +88,20 @@ class _EditSkillsSectionState extends State<EditSkillsSection> {
                     Row(
                       children: [
                         Expanded(
-                          child: Column(
-                            children: [
-                              Slider(
-                                value: entry.value.toDouble(),
-                                min: 0,
-                                max: 100,
-                                divisions: 20,
-                                label: entry.value.toString(),
-                                activeColor: _getColorForSkillLevel(
-                                  entry.value,
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _skillRatings[entry.key] = value.toInt();
-                                    widget.profile.skillRatings[entry.key] =
-                                        value.toInt();
-                                  });
-                                },
-                              ),
-                              LinearProgressIndicator(
-                                value: entry.value / 100,
-                                minHeight: 8,
-                                backgroundColor: Colors.grey[300],
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  _getColorForSkillLevel(entry.value),
-                                ),
-                              ),
-                            ],
+                          child: Slider(
+                            value: entry.value.toDouble(),
+                            min: 0,
+                            max: 100,
+                            divisions: 20,
+                            label: entry.value.toString(),
+                            activeColor: _getColorForSkillLevel(entry.value),
+                            onChanged: (value) {
+                              setState(() {
+                                _skillRatings[entry.key] = value.toInt();
+                                widget.profile.skillRatings[entry.key] = value
+                                    .toInt();
+                              });
+                            },
                           ),
                         ),
                       ],
