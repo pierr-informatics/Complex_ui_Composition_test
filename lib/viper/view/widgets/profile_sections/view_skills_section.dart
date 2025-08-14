@@ -8,29 +8,46 @@ class ViewSkillsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Skills', style: Theme.of(context).textTheme.titleLarge),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: profile.skillRatings.entries
-                  .map(
-                    (skill) => Chip(
-                      label: Text('${skill.key} (${skill.value}%)'),
-                      backgroundColor: _getColorForSkillLevel(skill.value),
-                      labelStyle: const TextStyle(color: Colors.white),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Skills',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
         ),
-      ),
+        const SizedBox(height: 16),
+        ...profile.skillRatings.entries.map(
+          (entry) => Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      entry.key,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text('${entry.value}%'),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                LinearProgressIndicator(
+                  value: entry.value / 100,
+                  minHeight: 8,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    _getColorForSkillLevel(entry.value),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -32,34 +32,74 @@ class _EditAddressSectionState extends State<EditAddressSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: widget.formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Address', style: Theme.of(context).textTheme.titleLarge),
-          TextFormField(
-            controller: _addressController,
-            decoration: const InputDecoration(labelText: 'Address'),
-            onSaved: (value) => widget.profile.address = value!,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Address',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _addressController,
+          decoration: const InputDecoration(
+            labelText: 'Street Address',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.home),
           ),
-          TextFormField(
-            controller: _cityController,
-            decoration: const InputDecoration(labelText: 'City'),
-            onSaved: (value) => widget.profile.city = value!,
-          ),
-          TextFormField(
-            controller: _stateController,
-            decoration: const InputDecoration(labelText: 'State'),
-            onSaved: (value) => widget.profile.state = value!,
-          ),
-          TextFormField(
-            controller: _zipController,
-            decoration: const InputDecoration(labelText: 'Zip Code'),
-            onSaved: (value) => widget.profile.zipCode = value!,
-          ),
-        ],
-      ),
+          onChanged: (value) => widget.profile.address = value,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: TextFormField(
+                controller: _cityController,
+                decoration: const InputDecoration(
+                  labelText: 'City',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => widget.profile.city = value,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TextFormField(
+                controller: _stateController,
+                decoration: const InputDecoration(
+                  labelText: 'State',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => widget.profile.state = value,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TextFormField(
+                controller: _zipController,
+                decoration: const InputDecoration(
+                  labelText: 'ZIP Code',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Required';
+                  }
+                  if (value.length != 5 || int.tryParse(value) == null) {
+                    return 'Invalid ZIP';
+                  }
+                  return null;
+                },
+                onChanged: (value) => widget.profile.zipCode = value,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

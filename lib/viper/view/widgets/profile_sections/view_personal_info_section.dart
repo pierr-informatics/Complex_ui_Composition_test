@@ -15,27 +15,35 @@ class ViewPersonalInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Personal Information',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            _buildInfoItem('Email', profile.email),
-            _buildInfoItem('Phone', profile.phoneNumber),
-            _buildInfoItem(
-              'Date of Birth',
-              DateFormat('yyyy-MM-dd').format(profile.dateOfBirth),
-            ),
-            _buildInfoItem('Age', presenter.getAge().toString()),
-            _buildInfoItem('Gender', profile.gender),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Personal Information',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
         ),
-      ),
+        const SizedBox(height: 16),
+        _buildInfoItem('Email', profile.email),
+        _buildInfoItem('Phone', profile.phoneNumber),
+        _buildInfoItem(
+          'Date of Birth',
+          DateFormat('yyyy-MM-dd').format(profile.dateOfBirth),
+        ),
+        _buildInfoItem('Age', presenter.getAge().toString()),
+        _buildInfoItem(
+          'Gender',
+          profile.gender.isEmpty ? 'Not specified' : profile.gender,
+        ),
+        _buildInfoItem(
+          'Preferred Contact',
+          profile.preferredContactMethod.isEmpty
+              ? 'Not specified'
+              : profile.preferredContactMethod,
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 
@@ -43,10 +51,19 @@ class ViewPersonalInfoSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(value),
+          SizedBox(
+            width: 100,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );

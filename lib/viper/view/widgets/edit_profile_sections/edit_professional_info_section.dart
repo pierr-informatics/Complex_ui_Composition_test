@@ -38,33 +38,59 @@ class _EditProfessionalInfoSectionState
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: widget.formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Professional Information',
-            style: Theme.of(context).textTheme.titleLarge,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Professional Information',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _occupationController,
+          decoration: const InputDecoration(
+            labelText: 'Occupation',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.work),
           ),
-          TextFormField(
-            controller: _occupationController,
-            decoration: const InputDecoration(labelText: 'Occupation'),
-            onSaved: (value) => widget.profile.occupation = value!,
+          onChanged: (value) => widget.profile.occupation = value,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _companyController,
+          decoration: const InputDecoration(
+            labelText: 'Company',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.business),
           ),
-          TextFormField(
-            controller: _companyController,
-            decoration: const InputDecoration(labelText: 'Company'),
-            onSaved: (value) => widget.profile.companyName = value!,
+          onChanged: (value) => widget.profile.companyName = value,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _incomeController,
+          decoration: const InputDecoration(
+            labelText: 'Annual Income',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.attach_money),
           ),
-          TextFormField(
-            controller: _incomeController,
-            decoration: const InputDecoration(labelText: 'Income'),
-            keyboardType: TextInputType.number,
-            onSaved: (value) => widget.profile.income = double.parse(value!),
-          ),
-        ],
-      ),
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your income';
+            }
+            if (double.tryParse(value) == null) {
+              return 'Please enter a valid number';
+            }
+            return null;
+          },
+          onChanged: (value) {
+            widget.profile.income =
+                double.tryParse(value) ?? widget.profile.income;
+          },
+        ),
+      ],
     );
   }
 }

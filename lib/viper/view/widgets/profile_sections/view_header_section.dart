@@ -8,24 +8,31 @@ class ViewHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundImage: NetworkImage(profile.profileImageUrl),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          '${profile.firstName} ${profile.lastName}',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          profile.occupation,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 24),
-      ],
+    return Center(
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 60,
+            backgroundImage: NetworkImage(profile.profileImageUrl),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '${profile.firstName} ${profile.lastName}',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          Text(
+            profile.occupation,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Text(
+            profile.companyName,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 24),
+          const Divider(),
+          const SizedBox(height: 16),
+        ],
+      ),
     );
   }
 }

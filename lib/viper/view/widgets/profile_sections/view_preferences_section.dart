@@ -14,25 +14,26 @@ class ViewPreferencesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Preferences', style: Theme.of(context).textTheme.titleLarge),
-            ...profile.preferences.entries.map((entry) {
-              return SwitchListTile(
-                title: Text(_formatPreferenceKey(entry.key)),
-                value: entry.value,
-                onChanged: (bool value) {
-                  presenter.updatePreference(entry.key, value);
-                },
-              );
-            }).toList(),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Preferences',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
         ),
-      ),
+        const SizedBox(height: 16),
+        ...profile.preferences.entries.map(
+          (entry) => SwitchListTile(
+            title: Text(_formatPreferenceKey(entry.key)),
+            value: entry.value,
+            onChanged: (bool value) {
+              presenter.updatePreference(entry.key, value);
+            },
+          ),
+        ),
+      ],
     );
   }
 

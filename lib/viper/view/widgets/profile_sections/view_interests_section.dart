@@ -8,23 +8,25 @@ class ViewInterestsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Interests', style: Theme.of(context).textTheme.titleLarge),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: profile.interests
-                  .map((interest) => Chip(label: Text(interest)))
-                  .toList(),
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Interests',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
         ),
-      ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: profile.interests
+              .map((interest) => Chip(label: Text(interest)))
+              .toList(),
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }

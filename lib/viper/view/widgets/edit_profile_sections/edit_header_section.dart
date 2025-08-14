@@ -13,35 +13,29 @@ class EditHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Center(
-          child: Stack(
-            children: [
-              CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(profile.profileImageUrl),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: IconButton(
-                  icon: const Icon(Icons.camera_alt),
-                  onPressed: onImagePick,
-                ),
-              ),
-            ],
+    return Center(
+      child: Stack(
+        children: [
+          CircleAvatar(
+            radius: 60,
+            backgroundImage: NetworkImage(profile.profileImageUrl),
           ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          '${profile.firstName} ${profile.lastName}',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 8),
-        Text(profile.email, style: Theme.of(context).textTheme.bodyMedium),
-        const SizedBox(height: 24),
-      ],
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.camera_alt, color: Colors.white),
+                onPressed: onImagePick,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

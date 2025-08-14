@@ -1,15 +1,13 @@
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_address_section.dart';
+import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_additional_info_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_availability_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_certifications_section.dart';
-import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_education_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_header_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_interests_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_languages_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_personal_info_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_preferences_section.dart';
 import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_professional_info_section.dart';
-import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_skills_section.dart';
-import 'package:complex_ui/viper/view/widgets/edit_profile_sections/edit_work_history_section.dart';
 import 'package:complex_ui/viper/view/widgets/profile_sections/view_address_section.dart';
 import 'package:complex_ui/viper/view/widgets/profile_sections/view_availability_section.dart';
 import 'package:complex_ui/viper/view/widgets/profile_sections/view_certifications_section.dart';
@@ -297,12 +295,20 @@ class _UserProfileViewState extends State<UserProfileView> {
                     ),
                     ViewAddressSection(profile: profile),
                     ViewProfessionalInfoSection(profile: profile),
+                    ViewInterestsSection(profile: profile),
+                    ViewLanguagesSection(profile: profile),
+                    ViewCertificationsSection(profile: profile),
+                    ViewPreferencesSection(
+                      profile: profile,
+                      presenter: widget.presenter,
+                    ),
+                    ViewAvailabilitySection(profile: profile),
                   ],
                 ),
               ),
               const SizedBox(width: 16),
 
-              // Right side - Detailed information
+              // Right side - Detailed information in a card
               Expanded(
                 flex: 1,
                 child: Card(
@@ -317,19 +323,6 @@ class _UserProfileViewState extends State<UserProfileView> {
                         ViewWorkHistorySection(profile: profile),
                         const Divider(height: 32),
                         ViewEducationSection(profile: profile),
-                        const Divider(height: 32),
-                        ViewInterestsSection(profile: profile),
-                        const Divider(height: 32),
-                        ViewCertificationsSection(profile: profile),
-                        const Divider(height: 32),
-                        ViewLanguagesSection(profile: profile),
-                        const Divider(height: 32),
-                        ViewPreferencesSection(
-                          profile: profile,
-                          presenter: widget.presenter,
-                        ),
-                        const Divider(height: 32),
-                        ViewAvailabilitySection(profile: profile),
                       ],
                     ),
                   ),
@@ -343,84 +336,99 @@ class _UserProfileViewState extends State<UserProfileView> {
   }
 
   Widget _buildEditProfileForm(UserProfile profile) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          // Save/Cancel Buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton.icon(
-                icon: const Icon(Icons.save),
-                label: const Text('SAVE'),
-                onPressed: _saveProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-              TextButton(
-                onPressed: _toggleEditMode,
-                child: const Text('CANCEL'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with image
+            EditHeaderSection(
+              profile: _tempProfile,
+              onImagePick: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Image upload not implemented in this demo'),
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            const SizedBox(height: 16),
 
-          // Main content
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Left side
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    EditHeaderSection(
-                      profile: _tempProfile,
-                      onImagePick: () {
-                        // TODO: Implement image picking
-                      },
-                    ),
-                    EditPersonalInfoSection(
-                      profile: _tempProfile,
-                      formKey: _formKey,
-                    ),
-                    EditAddressSection(
-                      profile: _tempProfile,
-                      formKey: _formKey,
-                    ),
-                    EditProfessionalInfoSection(
-                      profile: _tempProfile,
-                      formKey: _formKey,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
+            // Personal Information Section
+            EditPersonalInfoSection(profile: _tempProfile, formKey: _formKey),
+            const SizedBox(height: 24),
 
-              // Right side
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    EditSkillsSection(profile: _tempProfile),
-                    EditWorkHistorySection(profile: _tempProfile),
-                    EditEducationSection(profile: _tempProfile),
-                    EditPreferencesSection(profile: _tempProfile),
-                    EditAvailabilitySection(profile: _tempProfile),
-                    EditInterestsSection(profile: _tempProfile),
-                    EditCertificationsSection(profile: _tempProfile),
-                    EditLanguagesSection(profile: _tempProfile),
-                  ],
+            // Address Section
+            EditAddressSection(profile: _tempProfile, formKey: _formKey),
+            const SizedBox(height: 24),
+
+            // Professional Information Section
+            EditProfessionalInfoSection(
+              profile: _tempProfile,
+              formKey: _formKey,
+            ),
+            const SizedBox(height: 24),
+
+            // Interests Section
+            EditInterestsSection(profile: _tempProfile),
+            const SizedBox(height: 24),
+
+            // Additional Information Section (Gender, Employment, Contact, etc.)
+            EditAdditionalInfoSection(profile: _tempProfile),
+            const SizedBox(height: 24),
+
+            // Languages Section
+            EditLanguagesSection(profile: _tempProfile),
+            const SizedBox(height: 24),
+
+            // Certifications Section
+            EditCertificationsSection(profile: _tempProfile),
+            const SizedBox(height: 24),
+
+            // Availability Section (Weekly Hours)
+            EditAvailabilitySection(profile: _tempProfile),
+            const SizedBox(height: 24),
+
+            // Preferences Section (App Settings)
+            EditPreferencesSection(profile: _tempProfile),
+            const SizedBox(height: 32),
+
+            // Save and Cancel buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _saveProfile();
+                        _toggleEditMode();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('SAVE PROFILE'),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _toggleEditMode,
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('CANCEL'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

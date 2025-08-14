@@ -8,27 +8,41 @@ class ViewCertificationsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Certifications',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            ...profile.certifications
-                .map(
-                  (cert) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text('• $cert'),
-                  ),
-                )
-                .toList(),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Certifications',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
         ),
-      ),
+        const SizedBox(height: 16),
+        profile.certifications.isEmpty
+            ? const Text('No certifications added')
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: profile.certifications
+                    .map(
+                      (cert) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.verified, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Text(
+                              cert,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+      ],
     );
   }
 }
