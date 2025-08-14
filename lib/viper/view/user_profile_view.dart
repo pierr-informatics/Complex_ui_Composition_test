@@ -213,23 +213,7 @@ class _UserProfileViewState extends State<UserProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Profile'),
-        actions: [
-          ValueListenableBuilder<UserProfile?>(
-            valueListenable: widget.presenter.userProfile,
-            builder: (context, profile, _) {
-              if (profile != null) {
-                return IconButton(
-                  icon: Icon(_isEditMode ? Icons.save : Icons.edit),
-                  onPressed: _toggleEditMode,
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('User Profile')),
       body: ValueListenableBuilder<bool>(
         valueListenable: widget.presenter.isLoading,
         builder: (context, isLoading, _) {
@@ -282,341 +266,232 @@ class _UserProfileViewState extends State<UserProfileView> {
   Widget _buildProfileView(UserProfile profile) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
-          // Left side - Basic profile information
-          Expanded(
-            flex: 1,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundImage: NetworkImage(profile.profileImageUrl),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '${profile.firstName} ${profile.lastName}',
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      Text(
-                        profile.occupation,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        profile.companyName,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
+          // Edit Button at the top
+          Align(
+            alignment: Alignment.topLeft,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.edit),
+              label: const Text('EDIT PROFILE'),
+              onPressed: _toggleEditMode,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
                 ),
-                const SizedBox(height: 24),
-                const Divider(),
-                const SizedBox(height: 16),
-
-                // Personal Information Section
-                _buildSectionTitle('Personal Information'),
-                _buildInfoItem('Email', profile.email),
-                _buildInfoItem('Phone', profile.phoneNumber),
-                _buildInfoItem(
-                  'Date of Birth',
-                  _dateFormat.format(profile.dateOfBirth),
-                ),
-                _buildInfoItem('Age', widget.presenter.getAge().toString()),
-                _buildInfoItem('Gender', profile.gender.isEmpty ? 'Not specified' : profile.gender),
-                _buildInfoItem('Preferred Contact', profile.preferredContactMethod.isEmpty ? 'Not specified' : profile.preferredContactMethod),
-
-                const SizedBox(height: 24),
-                // Address Section
-                _buildSectionTitle('Address'),
-                _buildInfoItem('Street', profile.address),
-                _buildInfoItem('City', profile.city),
-                _buildInfoItem('State', profile.state),
-                _buildInfoItem('ZIP Code', profile.zipCode),
-
-                const SizedBox(height: 24),
-                // Professional Information
-                _buildSectionTitle('Professional Information'),
-                _buildInfoItem('Occupation', profile.occupation),
-                _buildInfoItem('Company', profile.companyName),
-                _buildInfoItem(
-                  'Annual Income',
-                  '\$${NumberFormat('#,##0.00').format(profile.income)}',
-                ),
-                _buildInfoItem('Employment Type', profile.employmentType.isEmpty ? 'Not specified' : profile.employmentType),
-                _buildInfoItem('Years of Experience', profile.yearsOfExperience.toString()),
-                _buildInfoItem(
-                  'Expected Salary',
-                  '\$${NumberFormat('#,##0.00').format(profile.expectedSalary)}',
-                ),
-                _buildInfoItem(
-                  'Available From',
-                  _dateFormat.format(profile.availabilityDate),
-                ),
-                _buildInfoItem(
-                  'Remote Work Eligible',
-                  profile.isRemoteWorkEligible ? 'Yes' : 'No',
-                ),
-                _buildInfoItem(
-                  'Willing to Relocate',
-                  profile.isWillingToRelocate ? 'Yes' : 'No',
-                ),
-
-                const SizedBox(height: 24),
-                // Interests
-                _buildSectionTitle('Interests'),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: profile.interests
-                      .map((interest) => Chip(label: Text(interest)))
-                      .toList(),
-                ),
-
-                const SizedBox(height: 24),
-                
-                // Languages
-                _buildSectionTitle('Languages'),
-                profile.languages.isEmpty 
-                  ? const Text('No languages specified')
-                  : Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: profile.languages
-                          .map((lang) => Chip(
-                            label: Text(lang),
-                            backgroundColor: Colors.blue.shade100,
-                          ))
-                          .toList(),
-                    ),
-                
-                const SizedBox(height: 24),
-                
-                // Certifications
-                _buildSectionTitle('Certifications'),
-                profile.certifications.isEmpty 
-                  ? const Text('No certifications added')
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: profile.certifications
-                          .map((cert) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.verified, color: Colors.green),
-                                const SizedBox(width: 8),
-                                Text(cert, style: const TextStyle(fontWeight: FontWeight.w500)),
-                              ],
-                            ),
-                          ))
-                          .toList(),
-                    ),
-                
-                const SizedBox(height: 24),
-                // Preferences
-                _buildSectionTitle('Preferences'),
-                ...profile.preferences.entries.map(
-                  (entry) => SwitchListTile(
-                    title: Text(_formatPreferenceKey(entry.key)),
-                    value: entry.value,
-                    onChanged: (bool value) {
-                      widget.presenter.updatePreference(entry.key, value);
-                    },
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Availability Hours
-                _buildSectionTitle('Weekly Availability'),
-                ...profile.availabilityWeekdays.entries.map(
-                  (entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w500)),
-                        Text('${entry.value} hours', 
-                          style: TextStyle(
-                            color: entry.value > 0 ? Colors.green : Colors.grey,
-                            fontWeight: entry.value > 0 ? FontWeight.bold : FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
+          const SizedBox(height: 16),
 
-          // Right side - Complex grid with additional information
-          const SizedBox(width: 24),
-          Expanded(
-            flex: 1,
-            child: Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+          // Main content
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Left side - Basic profile information
+              Expanded(
+                flex: 1,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Skills section with bar visualization
-                    _buildSectionTitle('Skills'),
-                    ...profile.skillRatings.entries.map(
+                    Center(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage(
+                              profile.profileImageUrl,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            '${profile.firstName} ${profile.lastName}',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          Text(
+                            profile.occupation,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Text(
+                            profile.companyName,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    const SizedBox(height: 16),
+
+                    // Personal Information Section
+                    _buildSectionTitle('Personal Information'),
+                    _buildInfoItem('Email', profile.email),
+                    _buildInfoItem('Phone', profile.phoneNumber),
+                    _buildInfoItem(
+                      'Date of Birth',
+                      _dateFormat.format(profile.dateOfBirth),
+                    ),
+                    _buildInfoItem('Age', widget.presenter.getAge().toString()),
+                    _buildInfoItem(
+                      'Gender',
+                      profile.gender.isEmpty ? 'Not specified' : profile.gender,
+                    ),
+                    _buildInfoItem(
+                      'Preferred Contact',
+                      profile.preferredContactMethod.isEmpty
+                          ? 'Not specified'
+                          : profile.preferredContactMethod,
+                    ),
+
+                    const SizedBox(height: 24),
+                    // Address Section
+                    _buildSectionTitle('Address'),
+                    _buildInfoItem('Street', profile.address),
+                    _buildInfoItem('City', profile.city),
+                    _buildInfoItem('State', profile.state),
+                    _buildInfoItem('ZIP Code', profile.zipCode),
+
+                    const SizedBox(height: 24),
+                    // Professional Information
+                    _buildSectionTitle('Professional Information'),
+                    _buildInfoItem('Occupation', profile.occupation),
+                    _buildInfoItem('Company', profile.companyName),
+                    _buildInfoItem(
+                      'Annual Income',
+                      '\$${NumberFormat('#,##0.00').format(profile.income)}',
+                    ),
+                    _buildInfoItem(
+                      'Employment Type',
+                      profile.employmentType.isEmpty
+                          ? 'Not specified'
+                          : profile.employmentType,
+                    ),
+                    _buildInfoItem(
+                      'Years of Experience',
+                      profile.yearsOfExperience.toString(),
+                    ),
+                    _buildInfoItem(
+                      'Expected Salary',
+                      '\$${NumberFormat('#,##0.00').format(profile.expectedSalary)}',
+                    ),
+                    _buildInfoItem(
+                      'Available From',
+                      _dateFormat.format(profile.availabilityDate),
+                    ),
+                    _buildInfoItem(
+                      'Remote Work Eligible',
+                      profile.isRemoteWorkEligible ? 'Yes' : 'No',
+                    ),
+                    _buildInfoItem(
+                      'Willing to Relocate',
+                      profile.isWillingToRelocate ? 'Yes' : 'No',
+                    ),
+
+                    const SizedBox(height: 24),
+                    // Interests
+                    _buildSectionTitle('Interests'),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: profile.interests
+                          .map((interest) => Chip(label: Text(interest)))
+                          .toList(),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Languages
+                    _buildSectionTitle('Languages'),
+                    profile.languages.isEmpty
+                        ? const Text('No languages specified')
+                        : Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: profile.languages
+                                .map(
+                                  (lang) => Chip(
+                                    label: Text(lang),
+                                    backgroundColor: Colors.blue.shade100,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+
+                    const SizedBox(height: 24),
+
+                    // Certifications
+                    _buildSectionTitle('Certifications'),
+                    profile.certifications.isEmpty
+                        ? const Text('No certifications added')
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: profile.certifications
+                                .map(
+                                  (cert) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.verified,
+                                          color: Colors.green,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          cert,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+
+                    const SizedBox(height: 24),
+                    // Preferences
+                    _buildSectionTitle('Preferences'),
+                    ...profile.preferences.entries.map(
+                      (entry) => SwitchListTile(
+                        title: Text(_formatPreferenceKey(entry.key)),
+                        value: entry.value,
+                        onChanged: (bool value) {
+                          widget.presenter.updatePreference(entry.key, value);
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Availability Hours
+                    _buildSectionTitle('Weekly Availability'),
+                    ...profile.availabilityWeekdays.entries.map(
                       (entry) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  entry.key,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text('${entry.value}%'),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            LinearProgressIndicator(
-                              value: entry.value / 100,
-                              minHeight: 8,
-                              backgroundColor: Colors.grey[300],
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                _getColorForSkillLevel(entry.value),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const Divider(height: 32),
-
-                    // Work experience section
-                    _buildSectionTitle('Work Experience'),
-                    ...profile.workExperience.map(
-                      (exp) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              exp.position,
+                              entry.key,
                               style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
-                              exp.companyName,
+                              '${entry.value} hours',
                               style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.grey[700],
+                                color: entry.value > 0
+                                    ? Colors.green
+                                    : Colors.grey,
+                                fontWeight: entry.value > 0
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
                             ),
-                            Text(
-                              _formatWorkPeriod(exp.startDate, exp.endDate),
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(exp.description),
-                            const SizedBox(height: 4),
-                            if (exp.achievements.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Key Achievements:',
-                                style: TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                              const SizedBox(height: 4),
-                              ...exp.achievements.map(
-                                (achievement) => Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
-                                    top: 2.0,
-                                    bottom: 2.0,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text('• '),
-                                      Expanded(child: Text(achievement)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                            const SizedBox(height: 8),
-                            if (profile.workExperience.last != exp)
-                              const Divider(),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const Divider(height: 32),
-
-                    // Education section
-                    _buildSectionTitle('Education'),
-                    ...profile.education.map(
-                      (edu) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              edu.institution,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              '${edu.degree} in ${edu.field}',
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                            Text(
-                              _formatWorkPeriod(edu.startDate, edu.endDate),
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            const SizedBox(height: 4),
-                            Text('GPA: ${edu.gpa.toStringAsFixed(1)}'),
-                            if (edu.achievements.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Achievements:',
-                                style: TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                              const SizedBox(height: 4),
-                              ...edu.achievements.map(
-                                (achievement) => Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
-                                    top: 2.0,
-                                    bottom: 2.0,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text('• '),
-                                      Expanded(child: Text(achievement)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                            const SizedBox(height: 8),
-                            if (profile.education.last != edu) const Divider(),
                           ],
                         ),
                       ),
@@ -624,7 +499,186 @@ class _UserProfileViewState extends State<UserProfileView> {
                   ],
                 ),
               ),
-            ),
+
+              // Right side - Complex grid with additional information
+              const SizedBox(width: 24),
+              Expanded(
+                flex: 1,
+                child: Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Skills section with bar visualization
+                        _buildSectionTitle('Skills'),
+                        ...profile.skillRatings.entries.map(
+                          (entry) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      entry.key,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text('${entry.value}%'),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                LinearProgressIndicator(
+                                  value: entry.value / 100,
+                                  minHeight: 8,
+                                  backgroundColor: Colors.grey[300],
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    _getColorForSkillLevel(entry.value),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const Divider(height: 32),
+
+                        // Work experience section
+                        _buildSectionTitle('Work Experience'),
+                        ...profile.workExperience.map(
+                          (exp) => Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  exp.position,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  exp.companyName,
+                                  style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                                Text(
+                                  _formatWorkPeriod(exp.startDate, exp.endDate),
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(exp.description),
+                                const SizedBox(height: 4),
+                                if (exp.achievements.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    'Key Achievements:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  ...exp.achievements.map(
+                                    (achievement) => Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 16.0,
+                                        top: 2.0,
+                                        bottom: 2.0,
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text('• '),
+                                          Expanded(child: Text(achievement)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+                                if (profile.workExperience.last != exp)
+                                  const Divider(),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const Divider(height: 32),
+
+                        // Education section
+                        _buildSectionTitle('Education'),
+                        ...profile.education.map(
+                          (edu) => Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  edu.institution,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  '${edu.degree} in ${edu.field}',
+                                  style: TextStyle(color: Colors.grey[700]),
+                                ),
+                                Text(
+                                  _formatWorkPeriod(edu.startDate, edu.endDate),
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                                const SizedBox(height: 4),
+                                Text('GPA: ${edu.gpa.toStringAsFixed(1)}'),
+                                if (edu.achievements.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    'Achievements:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  ...edu.achievements.map(
+                                    (achievement) => Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 16.0,
+                                        top: 2.0,
+                                        bottom: 2.0,
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text('• '),
+                                          Expanded(child: Text(achievement)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+                                if (profile.education.last != edu)
+                                  const Divider(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
