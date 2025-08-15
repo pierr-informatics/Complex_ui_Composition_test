@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:complex_ui/viper/entity/user_profile.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/street_view.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/city_view.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/state_view.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/zip_code_view.dart';
+import 'package:complex_ui/Client111/entity/client111_user_profile.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/street_view.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/city_view.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/state_view.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/zip_code_view.dart';
 
 class ViewAddressSection extends StatelessWidget {
-  final UserProfile profile;
+  final Client111UserProfile profile;
 
   const ViewAddressSection({super.key, required this.profile});
 

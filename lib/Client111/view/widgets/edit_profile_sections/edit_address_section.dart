@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:complex_ui/viper/entity/user_profile.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/street_edit.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/city_edit.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/state_edit.dart';
-import 'package:complex_ui/viper/view/widgets/address_components/zip_code_edit.dart';
+import 'package:complex_ui/Client111/entity/client111_user_profile.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/street_edit.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/city_edit.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/state_edit.dart';
+import 'package:complex_ui/Client111/view/widgets/address_components/zip_code_edit.dart';
 
 class EditAddressSection extends StatefulWidget {
-  final UserProfile profile;
+  final Client111UserProfile profile;
   final GlobalKey<FormState> formKey;
 
   const EditAddressSection({
